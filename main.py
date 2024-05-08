@@ -31,23 +31,31 @@ async def read_root():
     
 
 @app.get("/start_model_trigger")
-async def model_trigger(page:int):
+async def model_trigger(page: int):
     while True:
-      try:
-        page = str(page)
-        url = "https://api-ai-service.transexpress.lk/trigger_the_data_fecher?page="+page+"&paginate=10000"
-        print(url,page)
-        
-        payload = {}
-        headers = {
-          'accept': 'application/json'
-        }
-        
-        response = requests.request("GET", url, headers=headers, data=payload)
-        page = int(page)+1
-        print(response.text)
-      except:
-        break
-    return page
+        try:
+            page_str = str(page)
+            url = f"https://api-ai-service.transexpress.lk/trigger_the_data_fecher?page={page_str}&paginate=10000"
+            print(url, page_str)
+
+            payload = {}
+            headers = {
+                'accept': 'application/json'
+            }
+
+            response = requests.request("GET", url, headers=headers, data=payload)
+
+            # Check if the response status code is 200
+            if response.status_code != 200:
+                break
+
+            page += 1
+            print(response.text)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            break
+
+    return {"last_processed_page": page}
 
 
